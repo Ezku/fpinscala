@@ -130,13 +130,26 @@ object PolymorphicFunctions {
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
   def isSorted[A](as: Array[A], gt: (A,A) => Boolean): Boolean = {
-    @annotation.tailrec
-    def go(index: Int) = false
-    go(0)
+    as.length match {
+      case 0 => true
+      case 1 => true
+      case n =>
+        @annotation.tailrec
+        def go(index: Int, left: A, right: A): Boolean =
+          if (gt(left, right)) false
+          else if (n > index + 1) go(index+1, right, as(index+1))
+          else true
+        go(0, as(0), as(1))
+    }
   }
 
   def main(args: Array[String]): Unit = {
-    println(isSorted(Array(1, 2, 3), (left: Int, right: Int) => left <= right))
+    val cmp = (left: Int, right: Int) => left > right
+    println(isSorted(Array(), cmp))
+    println(isSorted(Array(1), cmp))
+    println(isSorted(Array(1, 2), cmp))
+    println(isSorted(Array(1, 2, 3), cmp))
+    println(isSorted(Array(1, 3, 2), cmp))
   }
   
 
