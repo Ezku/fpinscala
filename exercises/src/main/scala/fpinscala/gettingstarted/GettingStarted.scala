@@ -137,9 +137,9 @@ object PolymorphicFunctions {
         @annotation.tailrec
         def go(index: Int, left: A, right: A): Boolean =
           if (gt(left, right)) false
-          else if (n > index + 1) go(index+1, right, as(index+1))
-          else true
-        go(0, as(0), as(1))
+          else if (index == n) true
+          else go(index+1, right, as(index))
+        go(2, as(0), as(1))
     }
   }
 
