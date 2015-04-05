@@ -18,6 +18,12 @@ object ListSpec extends Properties("list") {
     List.length(List.setHead(l, a)) == List.length(l)
   }
 
+  property("drop decreases the length of a list by n up to list length") = forAll { (l: List[Int], n: Int) =>
+    ((List.length(l) >= n) && (n >= 0)) ==> {
+      List.length(List.drop(l, n)) == (List.length(l) - n)
+    }
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
