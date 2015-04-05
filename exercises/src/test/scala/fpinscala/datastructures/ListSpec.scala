@@ -48,15 +48,15 @@ object ListSpec extends Properties("list") {
   }
 
   property("flatten yields a list with length equal to the sum of its lists' lengths") = forAll { (ll: List[List[Int]]) =>
-    List.sum(List.map(ll) { l => List.length(l) }) == List.length(List.flatten(ll))
+    List.sum(ll |> List.map { l => List.length(l) }) == List.length(List.flatten(ll))
   }
 
   property("map yields the same list, given identity") = forAll { (l: List[Int]) =>
-    List.map(l)(identity) == l
+    (l |> List.map(identity)) == l
   }
 
   property("map ignores function composition order") = forAll { (l: List[Int], f: Int => Double, g: Double => String) =>
-    List.map(l)(g compose f) == List.map(List.map(l)(f))(g)
+    (l |> List.map(g compose f)) ==  (l |> List.map(f) |> List.map(g))
   }
 
   property("filter ensures no items matching predicate will be left") = forAll { (l: List[Int], p: Int => Boolean) =>

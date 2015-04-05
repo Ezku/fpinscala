@@ -79,7 +79,7 @@ object List { // `List` companion object. Contains functions for creating and wo
     Cons(a,as)
   }
 
-  def map[A,B](l: List[A])(f: A => B): List[B] = foldRight(l, Nil:List[B]) { (a: A, bs: List[B]) =>
+  def map[A,B](f: A => B)(l: List[A]): List[B] = foldRight(l, Nil:List[B]) { (a: A, bs: List[B]) =>
     Cons(f(a), bs)
   }
 
