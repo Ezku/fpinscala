@@ -35,6 +35,14 @@ object ListSpec extends Properties("list") {
     List.length(List.init(l)) == (List.length(l) - 1)
   }
 
+  property("reverse maintains list length") = forAll { l: List[Int] =>
+    List.length(List.reverse(l)) == List.length(l)
+  }
+
+  property("a tail's reverse is the same as a reverse's init") = forAll { l: List[Int] =>
+    List.reverse(List.tail(l)) == List.init(List.reverse(l))
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
