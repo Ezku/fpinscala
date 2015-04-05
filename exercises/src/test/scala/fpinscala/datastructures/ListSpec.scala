@@ -43,6 +43,10 @@ object ListSpec extends Properties("list") {
     List.reverse(List.tail(l)) == List.init(List.reverse(l))
   }
 
+  property("append yiels a list equal in length to the sum of two lists' lengths") = forAll { (l: List[Int], r: List[Int]) =>
+    (List.length(l) + List.length(r)) == List.length(List.append(l, r))
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
