@@ -55,6 +55,10 @@ object ListSpec extends Properties("list") {
     List.map(l)(identity) == l
   }
 
+  property("map ignores function composition order") = forAll { (l: List[Int], f: Int => Double, g: Double => String) =>
+    List.map(l)(g compose f) == List.map(List.map(l)(f))(g)
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
