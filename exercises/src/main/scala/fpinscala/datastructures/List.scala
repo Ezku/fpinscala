@@ -8,6 +8,7 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] // Another data cons
 object List { // `List` companion object. Contains functions for creating and working with lists.
   def cons[A](head: A)(tail: List[A]): List[A] = Cons(head, tail)
   def unit[A](v: A) = Cons(v, Nil)
+  def empty[A] = Nil:List[A]
 
   def sum(ints: List[Int]): Int = foldLeft(ints, 0) { _ + _ }
 
@@ -90,14 +91,12 @@ object List { // `List` companion object. Contains functions for creating and wo
     _ |> List.append(_)
   }
 
-  def filter[A](f: A => Boolean)(as: List[A]): List[A] = as match {
-    case Nil => Nil
-    case Cons(a, as) =>
-      if (f(a))
-        Cons(a, filter(f)(as))
-      else
-        filter(f)(as)
-  }
+  def filter[A](f: A => Boolean) = flatMap({ a: A =>
+    if (f(a))
+      unit(a)
+    else
+      empty
+  }) _
 
   def flatMap[A,B](f: A => List[B])(as: List[A]) =
     flatten(map(f)(as))
