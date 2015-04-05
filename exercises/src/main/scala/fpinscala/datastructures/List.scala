@@ -84,4 +84,13 @@ object List { // `List` companion object. Contains functions for creating and wo
   }
 
   def flatten[A](ll: List[List[A]]): List[A] = foldRight(ll, Nil:List[A]) { List.append(_, _) }
+
+  def filter[A](f: A => Boolean)(as: List[A]): List[A] = as match {
+    case Nil => Nil
+    case Cons(a, as) =>
+      if (f(a))
+        Cons(a, filter(f)(as))
+      else
+        filter(f)(as)
+  }
 }

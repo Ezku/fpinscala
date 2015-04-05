@@ -59,6 +59,14 @@ object ListSpec extends Properties("list") {
     List.map(l)(g compose f) == List.map(List.map(l)(f))(g)
   }
 
+  property("filter ensures no items matching predicate will be left") = forAll { (l: List[Int], p: Int => Boolean) =>
+    (l |> List.filter(p) |> List.filter { i => !p(i) }) == Nil
+  }
+
+  property("consecutive applications of filter ignore application order") = forAll { (l: List[Int], a: Int => Boolean, b: Int => Boolean) =>
+    (l |> List.filter(a) |> List.filter(b)) == (l |> List.filter(b) |> List.filter(a))
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
@@ -66,5 +74,9 @@ object ListSpec extends Properties("list") {
         list <- oneOf[List[A]](Nil, genList)
       } yield(Cons(value, list))
     genList
+  }
+
+  implicit class Piper[A](val x: A) extends AnyVal {
+    def |>[B](f: A => B) = f(x)
   }
 }
