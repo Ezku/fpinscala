@@ -7,6 +7,7 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A] // Another data cons
 
 object List { // `List` companion object. Contains functions for creating and working with lists.
   def cons[A](head: A)(tail: List[A]): List[A] = Cons(head, tail)
+  def unit[A](v: A) = Cons(v, Nil)
 
   def sum(ints: List[Int]): Int = foldLeft(ints, 0) { _ + _ }
 
@@ -98,8 +99,10 @@ object List { // `List` companion object. Contains functions for creating and wo
         filter(f)(as)
   }
 
+  def flatMap[A,B](f: A => List[B])(as: List[A]) =
+    flatten(map(f)(as))
+
   implicit class Piper[A](val x: A) extends AnyVal {
     def |>[B](f: A => B) = f(x)
   }
-
 }

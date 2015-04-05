@@ -6,7 +6,7 @@ import Gen._
 import Prop._
 
 object ListSpec extends Properties("list") {
-  import List.{map => fmap, _}
+  import List.{map => fmap, flatMap => bind, _}
 
   property("length increases by one when adding an element") = forAll { (l: List[Int], a: Int) =>
     (l |> cons(a) |> length) == length(l) + 1
@@ -67,6 +67,16 @@ object ListSpec extends Properties("list") {
 
   property("consecutive applications of filter ignore application order") = forAll { (l: List[Int], a: Int => Boolean, b: Int => Boolean) =>
     (l |> filter(a) |> filter(b)) == (l |> filter(b) |> filter(a))
+  }
+
+  property("flatMap yields identity given identity") = forAll { l: List[Int] =>
+    (l |> bind(unit)) == l
+  }
+
+  property("flatMap ignores function composition order") = forAll { (l: List[Int], f: Int => List[Double], g: Double => List[String]) =>
+    (l |> bind(f) |> bind(g)) == (l |> List.flatMap { i: Int =>
+      bind(g)(f(i))
+    })
   }
 
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
