@@ -77,6 +77,12 @@ object ListSpec extends Properties("list") {
     (l |> bind(f) |> bind(g)) == (l |> bind { _ |> f |> bind(g) })
   }
 
+  property("the sum of a zipWith sum is the same as the sum over the individual lists") = forAll { (a: List[Int], b: List[Int]) =>
+    (length(a) == length(b)) ==> {
+      ((a -> b) |> zipWith { _ + _ } |> sum) == sum(a) + sum(b)
+    }
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {

@@ -101,6 +101,13 @@ object List { // `List` companion object. Contains functions for creating and wo
   def flatMap[A,B](f: A => List[B])(as: List[A]) =
     flatten(map(f)(as))
 
+  def zipWith[A,B](f: (A, A) => B)(lists: (List[A], List[A])): List[B] = lists match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(l, ls), Cons(r, rs)) =>
+      Cons(f(l, r), zipWith(f)(ls -> rs))
+  }
+
   implicit class Piper[A](val x: A) extends AnyVal {
     def |>[B](f: A => B) = f(x)
   }
