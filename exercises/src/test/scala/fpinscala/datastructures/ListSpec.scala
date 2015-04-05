@@ -51,6 +51,10 @@ object ListSpec extends Properties("list") {
     List.sum(List.map(ll) { l => List.length(l) }) == List.length(List.flatten(ll))
   }
 
+  property("map yields the same list, given identity") = forAll { (l: List[Int]) =>
+    List.map(l)(identity) == l
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
