@@ -80,4 +80,6 @@ object List { // `List` companion object. Contains functions for creating and wo
   }
 
   def map[A,B](l: List[A])(f: A => B): List[B] = sys.error("todo")
+
+  def flatten[A](ll: List[List[A]]): List[A] = foldRight(ll, Nil:List[A]) { List.append(_, _) }
 }

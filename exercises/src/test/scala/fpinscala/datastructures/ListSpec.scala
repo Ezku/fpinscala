@@ -47,6 +47,10 @@ object ListSpec extends Properties("list") {
     (List.length(l) + List.length(r)) == List.length(List.append(l, r))
   }
 
+  property("flatten yields a list with length equal to the sum of its lists' lengths") = forAll { (ll: List[List[Int]]) =>
+    List.sum(List.map(ll) { l => List.length(l) }) == List.length(List.flatten(ll))
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
