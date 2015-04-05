@@ -24,6 +24,13 @@ object ListSpec extends Properties("list") {
     }
   }
 
+  property("dropWhile ensures the list will not start with an element that matches the predicate") = forAll { (l: List[Int], p: Int => Boolean) =>
+    List.dropWhile(l, p) match {
+      case Nil => true
+      case Cons(a, as) => !p(a)
+    }
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
