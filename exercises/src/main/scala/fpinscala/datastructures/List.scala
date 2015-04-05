@@ -29,9 +29,8 @@ object List { // `List` companion object. Contains functions for creating and wo
     }
 
   def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
-    as match {
-      case Nil => z
-      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    foldLeft(reverse(as), z) { (z: B, a: A) =>
+      f(a, z)
     }
 
   def sum2(ns: List[Int]) =
