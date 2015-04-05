@@ -27,9 +27,9 @@ object ListSpec extends Properties("list") {
   }
 
   property("dropWhile ensures the list will not start with an element that matches the predicate") = forAll { (l: List[Int], p: Int => Boolean) =>
-    (l |> dropWhile(p)) match {
-      case Nil => true
-      case Cons(a, as) => !p(a)
+    (l |> dropWhile(p) |> head) match {
+      case None => true
+      case Some(a) => !p(a)
     }
   }
 
