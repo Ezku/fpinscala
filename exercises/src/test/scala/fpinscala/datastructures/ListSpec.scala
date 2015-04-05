@@ -32,23 +32,23 @@ object ListSpec extends Properties("list") {
   }
 
   property("init decreases the length of a non-empty list by one") = forAll { l: List[Int] =>
-    List.length(List.init(l)) == (List.length(l) - 1)
+    (l |> List.init |> List.length) == (List.length(l) - 1)
   }
 
   property("reverse maintains list length") = forAll { l: List[Int] =>
-    List.length(List.reverse(l)) == List.length(l)
+    (l |> List.reverse |> List.length) == (l |> List.length)
   }
 
   property("a tail's reverse is the same as a reverse's init") = forAll { l: List[Int] =>
-    List.reverse(List.tail(l)) == List.init(List.reverse(l))
+    (l |> List.tail |> List.reverse) == (l |> List.reverse |> List.init)
   }
 
   property("append yiels a list equal in length to the sum of two lists' lengths") = forAll { (l: List[Int], r: List[Int]) =>
-    (List.length(l) + List.length(r)) == List.length(List.append(l, r))
+    (List.length(l) + List.length(r)) == (List.append(l, r) |> List.length)
   }
 
   property("flatten yields a list with length equal to the sum of its lists' lengths") = forAll { (ll: List[List[Int]]) =>
-    List.sum(ll |> List.map { l => List.length(l) }) == List.length(List.flatten(ll))
+    (ll |> List.map { l => List.length(l) } |> List.sum) == (ll |> List.flatten |> List.length)
   }
 
   property("map yields the same list, given identity") = forAll { (l: List[Int]) =>
