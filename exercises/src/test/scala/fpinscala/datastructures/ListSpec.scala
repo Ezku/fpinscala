@@ -74,9 +74,7 @@ object ListSpec extends Properties("list") {
   }
 
   property("flatMap ignores function composition order") = forAll { (l: List[Int], f: Int => List[Double], g: Double => List[String]) =>
-    (l |> bind(f) |> bind(g)) == (l |> List.flatMap { i: Int =>
-      bind(g)(f(i))
-    })
+    (l |> bind(f) |> bind(g)) == (l |> bind { _ |> f |> bind(g) })
   }
 
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
