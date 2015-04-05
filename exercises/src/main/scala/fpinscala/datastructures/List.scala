@@ -6,6 +6,8 @@ case object Nil extends List[Nothing] // A `List` data constructor representing 
 case class Cons[+A](head: A, tail: List[A]) extends List[A] // Another data constructor, representing nonempty lists. Note that `tail` is another `List[A]`, which may be `Nil` or another `Cons`.
 
 object List { // `List` companion object. Contains functions for creating and working with lists.
+  def cons[A](head: A)(tail: List[A]): List[A] = Cons(head, tail)
+
   def sum(ints: List[Int]): Int = foldLeft(ints, 0) { _ + _ }
 
   def product(ds: List[Double]): Double = foldLeft(ds, 0.0) { _ * _ }
@@ -22,7 +24,7 @@ object List { // `List` companion object. Contains functions for creating and wo
     case _ => 101
   }
 
-  def append[A](a1: List[A], a2: List[A]): List[A] =
+  def append[A](a2: List[A])(a1: List[A]): List[A] =
     foldRight(a1, a2) { Cons(_, _) }
 
   def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B = // Utility functions
@@ -42,21 +44,21 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(a, as) => as
   }
 
-  def setHead[A](l: List[A], h: A): List[A] = l match {
+  def setHead[A](h: A)(l: List[A]): List[A] = l match {
     case Nil => Cons(h, Nil)
     case Cons(a, as) => Cons(h, as)
   }
 
-  def drop[A](l: List[A], n: Int): List[A] = (l, n) match {
+  def drop[A](n: Int)(l: List[A]): List[A] = (l, n) match {
     case (_, n) if n < 0 => Nil
     case (_, 0) => l
     case (Nil, _) => Nil
-    case (Cons(a, as), _) => drop(as, n - 1)
+    case (Cons(a, as), _) => drop(n - 1)(as)
   }
 
-  def dropWhile[A](l: List[A], f: A => Boolean): List[A] = l match {
+  def dropWhile[A](f: A => Boolean)(l: List[A]): List[A] = l match {
     case Nil => Nil
-    case Cons(a, as) if f(a) => dropWhile(as, f)
+    case Cons(a, as) if f(a) => dropWhile(f)(as)
     case _ => l
   }
 
@@ -83,7 +85,9 @@ object List { // `List` companion object. Contains functions for creating and wo
     Cons(f(a), bs)
   }
 
-  def flatten[A](ll: List[List[A]]): List[A] = foldRight(ll, Nil:List[A]) { List.append(_, _) }
+  def flatten[A](ll: List[List[A]]): List[A] = foldRight(ll, Nil:List[A]) {
+    _ |> List.append(_)
+  }
 
   def filter[A](f: A => Boolean)(as: List[A]): List[A] = as match {
     case Nil => Nil
@@ -93,4 +97,9 @@ object List { // `List` companion object. Contains functions for creating and wo
       else
         filter(f)(as)
   }
+
+  implicit class Piper[A](val x: A) extends AnyVal {
+    def |>[B](f: A => B) = f(x)
+  }
+
 }
