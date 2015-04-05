@@ -31,6 +31,10 @@ object ListSpec extends Properties("list") {
     }
   }
 
+  property("init decreases the length of a non-empty list by one") = forAll { l: List[Int] =>
+    List.length(List.init(l)) == (List.length(l) - 1)
+  }
+
   implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
     def genList: Gen[List[A]] =
       for {
