@@ -1,4 +1,5 @@
 package fpinscala.datastructures
+import scala.annotation.tailrec
 
 sealed trait List[+A] // `List` data type, parameterized on a type, `A`
 case object Nil extends List[Nothing] // A `List` data constructor representing the empty list
@@ -76,9 +77,14 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(a, as) => Cons(a, init(as))
   }
 
-  def length[A](l: List[A]): Int = foldRight(l, 0) { (_, length: Int) => length + 1 }
+  def length[A](l: List[A]): Int = foldLeft(l, 0) { (length: Int, _) => length + 1 }
 
-  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = sys.error("todo")
+  @tailrec
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil => z
+    case Cons(a, Nil) => f(z, a)
+    case Cons(a, as) => foldLeft(as, f(z, a))(f)
+  }
 
   def map[A,B](l: List[A])(f: A => B): List[B] = sys.error("todo")
 }
