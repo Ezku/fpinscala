@@ -74,7 +74,7 @@ object ListSpec extends Properties("list") {
   }
 
   property("flatMap ignores function composition order") = forAll { (l: List[Int], f: Int => List[Double], g: Double => List[String]) =>
-    (l |> bind(f) |> bind(g)) == (l |> bind { _ |> f |> bind(g) })
+    (l |> bind(f) |> bind(g)) == (l |> bind { f andThen bind(g) })
   }
 
   property("the sum of a zipWith sum is the same as the sum over the individual lists") = forAll { (a: List[Int], b: List[Int]) =>
