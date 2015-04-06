@@ -57,6 +57,10 @@ object ListSpec extends Properties("list") {
     (ll |> fmap { length _ } |> sum) == (ll |> flatten |> length)
   }
 
+  property("flatten yields a list with all of the individual lists as subsequences") = forAll { (ll: List[List[Int]]) =>
+    (ll |> fmap { l => ll |> flatten |> hasSubSequence(l) } |> foldLeft(true) { _ && _ })
+  }
+
   property("map yields the same list, given identity") = forAll { (l: List[Int]) =>
     (l |> fmap(identity)) == l
   }
