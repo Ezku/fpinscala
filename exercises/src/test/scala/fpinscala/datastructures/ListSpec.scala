@@ -1,23 +1,28 @@
 package fpinscala.datastructures
 
 import org.scalacheck._
-import Arbitrary._
-import Gen._
 import Prop._
+
+import org.scalacheck.Shapeless._
 
 object ListSpec extends Properties("list") {
   import List.{map => fmap, flatMap => bind, _}
+  implicitly[Arbitrary[List[Int]]]
 
   property("length increases by one when adding an element") = forAll { (l: List[Int], a: Int) =>
     (l |> cons(a) |> length) == length(l) + 1
   }
 
   property("tail decreases the length of a non-empty list by one") = forAll { l: List[Int] =>
-    (l |> tail |> length) == length(l) - 1
+    (l |> length) > 0 ==> {
+      (l |> tail |> length) == length(l) - 1
+    }
   }
 
   property("setHead maintains the length of a non-empty list") = forAll { (l: List[Int], a: Int) =>
-    (l |> setHead(a) |> length) == length(l)
+    (l |> length) > 0 ==> {
+      (l |> setHead(a) |> length) == length(l)
+    }
   }
 
   property("drop decreases the length of a list by n up to list length") = forAll { (l: List[Int], n: Int) =>
@@ -34,7 +39,9 @@ object ListSpec extends Properties("list") {
   }
 
   property("init decreases the length of a non-empty list by one") = forAll { l: List[Int] =>
-    (l |> init |> length) == (length(l) - 1)
+    (l |> length) > 0 ==> {
+      (l |> init |> length) == (length(l) - 1)
+    }
   }
 
   property("reverse maintains list length") = forAll { l: List[Int] =>
@@ -89,14 +96,5 @@ object ListSpec extends Properties("list") {
     (length(a) == length(b)) ==> {
       ((a -> b) |> zipWith { _ + _ } |> sum) == sum(a) + sum(b)
     }
-  }
-
-  implicit def arbNonEmptyList[A](implicit a: Arbitrary[A]): Arbitrary[List[A]] = Arbitrary {
-    def genList: Gen[List[A]] =
-      for {
-        value <- arbitrary[A]
-        list <- oneOf[List[A]](Nil, genList)
-      } yield(Cons(value, list))
-    genList
   }
 }
