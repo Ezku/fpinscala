@@ -112,6 +112,29 @@ object List { // `List` companion object. Contains functions for creating and wo
       Cons(f(l, r), zipWith(f)(ls -> rs))
   }
 
+  def startsWith[A](seq: List[A])(l: List[A]): Boolean =
+    (seq, l) match {
+      case (Nil, _) => true
+      case (_, Nil) => false
+      case (Cons(a, as), Cons(b, bs)) =>
+        if (a == b)
+          startsWith(as)(bs)
+        else
+          false
+    }
+
+  def hasSubSequence[A](seq: List[A])(l: List[A]): Boolean =
+    (seq, l) match {
+      case (Nil, _) => true
+      case (_, Nil) => false
+      case (_, Cons(_, t)) =>
+        if (l |> startsWith(seq))
+          true
+        else
+          t |> hasSubSequence(seq)
+    }
+
+
   implicit class Piper[A](val x: A) extends AnyVal {
     def |>[B](f: A => B) = f(x)
   }

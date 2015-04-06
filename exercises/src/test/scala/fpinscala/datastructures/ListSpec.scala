@@ -49,6 +49,10 @@ object ListSpec extends Properties("list") {
     (length(l) + length(r)) == (l |> append(r) |> length)
   }
 
+  property("append yields a list with the two inputs lists as subsequences") = forAll { (l: List[Int], r: List[Int]) =>
+    (l |> append(r) |> hasSubSequence(l)) && (l |> append(r) |> hasSubSequence(r))
+  }
+
   property("flatten yields a list with length equal to the sum of its lists' lengths") = forAll { (ll: List[List[Int]]) =>
     (ll |> fmap { length _ } |> sum) == (ll |> flatten |> length)
   }
